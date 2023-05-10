@@ -4,7 +4,7 @@ import "time"
 
 type Comment struct {
 	Id 			int
-	Comment 	string
+	Content 	string
 	UserId		int
 	PassageId	int
 	time		time.Time

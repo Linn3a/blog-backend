@@ -6,10 +6,10 @@ type User struct {
 	Id 			int
 	Username 	string
 	Password 	string
-	avatar 		string
-	desc		string
-	gender		string
-	birthday	time.Time
+	Avatar 		string
+	Desc		string
+	Gender		string
+	Birthday	time.Time
 	LastLogin 	time.Time
 	CreatedTime time.Time
 }
