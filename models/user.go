@@ -9,6 +9,7 @@ type User struct {
 	Avatar 		string
 	Desc		string
 	Gender		string
+	IsAdmin		bool
 	Birthday	time.Time
 	LastLogin 	time.Time
 	CreatedTime time.Time

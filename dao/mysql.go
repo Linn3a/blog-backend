@@ -17,9 +17,26 @@ func Initmysql() {
 		panic(err)
 	}
 	// 建表
-	err = DB.AutoMigrate(models.User{},models.Admin{},models.Passage{}, models.Comment{}, models.Category{}, models.Tag{}, models.TagPassage{}, models.Star{})
+	err = DB.AutoMigrate(models.User{},models.Passage{}, models.Comment{}, models.Category{}, models.Tag{}, models.TagPassage{}, models.Star{})
 	if err != nil {
 		panic(err)
 	}
 	
+	var root models.User
+	
+	err = DB.First(&root).Error
+	if err != nil {
+		panic(err)
+	}
+
+	root = models.User{
+		Username:       "root",
+		Password:       "rootroot123",
+		IsAdmin:        true,
+	}
+
+	err = DB.Create(&root).Error
+	if err != nil {
+		panic(err)
+	}
 }
