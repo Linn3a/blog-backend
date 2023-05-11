@@ -1,7 +1,7 @@
 package models
 
 type TagPassage struct {
-	TagId		int
+	TagId		uint
 	PassageId	int
 }
 

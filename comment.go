@@ -1,16 +1,13 @@
 package models
 
-import (
-	"time"
-)
+import "time"
 
 type Comment struct {
 	Id 			uint
 	Content 	string
-	UserId		uint
-	PassageId	uint
+	UserId		int
+	PassageId	int
 	CreatedAt	time.Time
 }
 
 type Comments []*Comment
-

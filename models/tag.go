@@ -1,8 +1,7 @@
 package models
 
-
 type Tag struct {
-	Id 			int
+	Id 			uint
 	Name 		string
 	Color		string
 	CateId		int

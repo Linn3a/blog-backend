@@ -3,9 +3,9 @@ package models
 import "time"
 
 type Star struct {
-	UserId		int
+	UserId		uint
 	PassageId	int
-	time		time.Time
+	CreatedAt	time.Time
 }
 
 type Stars []*Star

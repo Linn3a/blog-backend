@@ -1,8 +1,10 @@
 package models
 
 type Category struct {
-	Id 			int
+	Id 			uint
 	Name 		string
+	Cover		string
 }
 
 type Categories []*Category
+

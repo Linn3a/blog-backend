@@ -1,18 +1,32 @@
 package models
 
-import "time"
+import (
+	"time"
+	"gorm.io/gorm"
+	_ "gorm.io/driver/mysql"
+)
 
 type User struct {
-	Id 			int
-	Username 	string
-	Password 	string
-	Avatar 		string
-	Desc		string
-	Gender		string
-	IsAdmin		bool
-	Birthday	time.Time
-	LastLogin 	time.Time
-	CreatedTime time.Time
+	Id 			uint		`json:"id"`
+	Username 	string		`json:"username"`
+	Password 	string		`json:"password"`
+	Avatar 		string		`json:"avatar"`
+	Desc		string		`json:"desc"`
+	Gender		string		`json:"gender"`
+	IsAdmin		bool		`json:"is_admin"`
+	Birthday	time.Time	`json:"birthday"`	
+	LastLogin 	time.Time	`json:"last_login"`
+	CreatedAt   time.Time   `json:"created_at"`
 }
 
 type Users []*User
+
+func CreateUser (user User,db *gorm.DB)(err error){
+	err = db.Create(&user).Error
+	return err
+}
+
+func GetUserById (id int,db *gorm.DB)(user User,err error){
+	err = db.Where("id = ?",id).First(&user).Error
+	return user,err
+}

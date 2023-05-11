@@ -1,9 +1,8 @@
-package dao
+package models
 
 import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"blog/models"
 )
 
 var DB *gorm.DB
@@ -17,26 +16,21 @@ func Initmysql() {
 		panic(err)
 	}
 	// 建表
-	err = DB.AutoMigrate(models.User{},models.Passage{}, models.Comment{}, models.Category{}, models.Tag{}, models.TagPassage{}, models.Star{})
+	err = DB.AutoMigrate(User{},Passage{}, Comment{}, Category{}, Tag{}, TagPassage{}, Star{})
 	if err != nil {
 		panic(err)
 	}
 	
-	var root models.User
+	var root User
 	
 	err = DB.First(&root).Error
 	if err != nil {
 		panic(err)
 	}
 
-	root = models.User{
+	DB.Save(&User{
 		Username:       "root",
 		Password:       "rootroot123",
 		IsAdmin:        true,
-	}
-
-	err = DB.Create(&root).Error
-	if err != nil {
-		panic(err)
-	}
+	})
 }

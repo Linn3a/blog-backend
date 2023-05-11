@@ -3,11 +3,11 @@ package models
 import "time"
 
 type Passage struct {
-	Id 			int
+	Id 			uint
 	Title 		string
 	Content 	string
 	desc		string
-	time		time.Time
+	CreatedAt	time.Time
 	CateId		int
 }
 
