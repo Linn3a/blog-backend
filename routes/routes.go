@@ -12,6 +12,29 @@ func CollectRoutes(r *gin.Engine) *gin.Engine {
 	r.POST("/user", controller.Register)
 	// 登录
 	r.POST("/login", controller.Login)
+	r.PUT("user/:id", controller.UpdateUser)
+	r.DELETE("/user/:id", controller.DeleteUser)
+	r.GET("/user", controller.GetAllUser)
+	r.GET("user/:id", controller.GetUser)
+
+	r.GET("/cate", controller.GetAllCates)
+	r.GET("/cate/:id", controller.GetCate)
+	r.POST("/cate", controller.CreateCate)
+	r.PUT("/cate/:id", controller.UpdateCate)
+	r.DELETE("/cate/:id", controller.DeleteCate)
+
+	r.GET("/p", controller.GetPassageContent)
+	r.POST("/p", controller.CreatePassage)
+	r.DELETE("/p/:id", controller.DeletePassage)
+	r.PUT("/p/:id", controller.UpdatePassage)
+
+	r.GET("/tag/:id", controller.GetTag)
+	r.POST("/tag", controller.CreateTag)
+	r.DELETE("/tag/:id", controller.DeleteTag)
+
+	r.POST("/comment", controller.CreateComment)
+	r.DELETE("/comment", controller.DeleteComment)
+
 	// // 上传图像
 	// r.POST("/upload", controller.Upload)
 	// r.POST("/upload/rich_editor_upload", controller.RichEditorUpload)
@@ -24,6 +47,7 @@ func CollectRoutes(r *gin.Engine) *gin.Engine {
 	// userRoutes.PUT("avatar/:id", controller.ModifyAvatar)          // 修改头像
 	// userRoutes.PUT("name/:id", controller.ModifyName)              // 修改用户名
 	// // 我的收藏
+
 	// colRoutes := r.Group("/collects")
 	// colRoutes.Use(middleware.AuthMiddleware())
 	// colRoutes.GET(":id", controller.Collects)        // 查询收藏

@@ -11,14 +11,7 @@ import (
 	// "strconv"
 )
 
-// Register 注册
-//
-//	{
-//	  "Username": "余霞",
-//	  "Password": "dolore",
-//	  "Desc": "cillum cupidatat",
-//	  "Gender": 2
-//	}
+// 用户注册：增加一个用户
 func Register(c *gin.Context) {
 
 	db := models.GetDB()
@@ -27,10 +20,6 @@ func Register(c *gin.Context) {
 	username := requestUser.Username
 	password := requestUser.Password
 	gender := requestUser.Gender
-	log.Println(username)
-	log.Println(password)
-	log.Println(gender)
-	// 数据验证
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
@@ -59,10 +48,11 @@ func Register(c *gin.Context) {
 		response.Response(c, http.StatusOK, false, nil, "注册失败")
 		return
 	}
-	// 返回结果
+
 	response.Response(c, http.StatusOK, true, gin.H{"id": newUser.Id}, "注册成功")
 }
 
+// 用户登录
 func Login(c *gin.Context) {
 	db := models.GetDB()
 
@@ -76,8 +66,6 @@ func Login(c *gin.Context) {
 		response.Response(c, http.StatusOK, false, nil, "用户不存在")
 		return
 	}
-	//hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	//log.Println(hashedPassword)
 
 	// Compare the hashed password with the stored hash
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
@@ -87,4 +75,107 @@ func Login(c *gin.Context) {
 
 	response.Response(c, http.StatusOK, false, gin.H{"user": user}, "登录成功")
 	return
+}
+
+func DeleteUser(c *gin.Context) {
+	db := models.GetDB()
+	userid := c.Param("id")
+	err := db.Delete(&models.User{}, userid).Error
+	if err != nil {
+		response.Response(c, http.StatusOK, false, nil, "注销用户失败")
+		return
+	}
+	response.Response(c, http.StatusOK, true, nil, "注销成功")
+	return
+}
+
+func UpdateUser(c *gin.Context) {
+	db := models.GetDB()
+	userid := c.Param("id")
+	var requestUser models.User
+	c.Bind(&requestUser)
+	if requestUser.Password != "" {
+		hashedNewPassword, err := bcrypt.GenerateFromPassword([]byte(requestUser.Password), bcrypt.DefaultCost)
+		if err != nil {
+			response.Response(c, http.StatusOK, false, nil, "密码加密失败")
+			return
+		}
+		requestUser.Password = string(hashedNewPassword)
+		err = db.Model(&models.User{}).Where("Id=?", userid).Updates(requestUser).Error
+		if err != nil {
+			response.Response(c, http.StatusOK, false, nil, "用户信息更新失败")
+			return
+		}
+		response.Response(c, http.StatusOK, true, nil, "用户信息更新成功")
+		return
+	}
+
+	err := db.Model(&models.User{}).Where("Id=?", userid).Updates(requestUser).Error
+	if err != nil {
+		response.Response(c, http.StatusOK, false, nil, "用户信息更新失败")
+		return
+	}
+	response.Response(c, http.StatusOK, true, nil, "用户信息更新成功")
+	return
+}
+
+type userinfo struct {
+	Id        string `json:"id"`
+	Username  string `json:"username"`
+	Gender    int    `json:"gender"`
+	LastLogin string `json:"last_login"`
+	CreatedAt string `json:"created_at"`
+	IsAdmin   bool   `json:"is_admin"`
+}
+
+func GetAllUser(c *gin.Context) {
+	db := models.GetDB()
+	var users []userinfo
+	err := db.Model(models.User{}).Limit(10).Find(&users).Error
+	if err != nil {
+		response.Response(c, http.StatusOK, false, nil, "获取用户信息失败")
+		return
+	}
+	log.Println(users)
+	response.Response(c, http.StatusOK, true, gin.H{"users": users}, "获取成功")
+	return
+}
+
+func GetUser(c *gin.Context) {
+	db := models.GetDB()
+	userid := c.Param("id")
+	var user models.User
+	err := db.Find(&user, userid)
+	if err != nil {
+		response.Response(c, http.StatusOK, false, nil, "获取用户信息失败")
+		return
+	}
+	var stars models.Stars
+	err = db.Find(&stars, "UserId=?", userid)
+	if err != nil {
+		response.Response(c, http.StatusOK, false, nil, "获取用户收藏文章失败")
+		return
+	}
+	log.Println(stars)
+	var comments models.Comments
+	err = db.Find(&comments, "UserId=?", userid)
+	if err != nil {
+		response.Response(c, http.StatusOK, false, nil, "获取用户发出评论失败")
+		return
+	}
+	log.Println(comments)
+	response.Response(c, http.StatusOK, true, gin.H{
+		"id":         user.Id,
+		"username":   user.Username,
+		"avatar":     user.Avatar,
+		"desc":       user.Desc,
+		"gender":     user.Gender,
+		"birthday":   user.Birthday,
+		"last_login": user.LastLogin,
+		"created_at": user.CreatedAt,
+		"is_admin":   user.IsAdmin,
+		"stared_pas": stars,
+		"comments":   comments,
+	}, "获取用户信息成功")
+
 }
