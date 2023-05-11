@@ -11,12 +11,15 @@ import (
 	// "strconv"
 )
 
-// 用户注册：增加一个用户
+// Register 用户注册：增加一个用户
 func Register(c *gin.Context) {
 
 	db := models.GetDB()
 	var requestUser models.User
-	c.Bind(&requestUser)
+	bindErr := c.Bind(&requestUser).Error()
+	if bindErr != "" {
+		response.Response(c, http.StatusOK, false, nil, "解析请求数据失败")
+	}
 	username := requestUser.Username
 	password := requestUser.Password
 	gender := requestUser.Gender
@@ -52,12 +55,15 @@ func Register(c *gin.Context) {
 	response.Response(c, http.StatusOK, true, gin.H{"id": newUser.Id}, "注册成功")
 }
 
-// 用户登录
+// Login 用户登录
 func Login(c *gin.Context) {
 	db := models.GetDB()
 
 	var requestUser models.User
-	c.Bind(&requestUser)
+	bindErr := c.Bind(&requestUser)
+	if bindErr != nil {
+		response.Response(c, http.StatusOK, false, nil, "解析请求数据失败")
+	}
 	username := requestUser.Username
 	password := requestUser.Password
 	var user models.User
@@ -93,7 +99,10 @@ func UpdateUser(c *gin.Context) {
 	db := models.GetDB()
 	userid := c.Param("id")
 	var requestUser models.User
-	c.Bind(&requestUser)
+	bindErr := c.Bind(&requestUser)
+	if bindErr != nil {
+		response.Response(c, http.StatusOK, false, nil, "解析请求数据失败")
+	}
 	if requestUser.Password != "" {
 		hashedNewPassword, err := bcrypt.GenerateFromPassword([]byte(requestUser.Password), bcrypt.DefaultCost)
 		if err != nil {

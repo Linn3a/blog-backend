@@ -23,7 +23,7 @@ func CollectRoutes(r *gin.Engine) *gin.Engine {
 	r.PUT("/cate/:id", controller.UpdateCate)
 	r.DELETE("/cate/:id", controller.DeleteCate)
 
-	r.GET("/p", controller.GetPassageContent)
+	r.GET("/p/:id", controller.GetPassageContent)
 	r.POST("/p", controller.CreatePassage)
 	r.DELETE("/p/:id", controller.DeletePassage)
 	r.PUT("/p/:id", controller.UpdatePassage)
