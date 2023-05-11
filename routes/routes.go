@@ -11,7 +11,7 @@ func CollectRoutes(r *gin.Engine) *gin.Engine {
 	// 注册
 	r.POST("/user", controller.Register)
 	// 登录
-	// r.POST("/login", controller.Login)
+	r.POST("/login", controller.Login)
 	// // 上传图像
 	// r.POST("/upload", controller.Upload)
 	// r.POST("/upload/rich_editor_upload", controller.RichEditorUpload)

@@ -6,8 +6,8 @@ import (
 )
 
 func Response(c *gin.Context, httpStatus int, code bool, data gin.H, msg string) {
-	c.JSON(httpStatus, gin.H{"status": gin.H{
-		"ok": code,
+	c.JSON(httpStatus, gin.H{"state": gin.H{
+		"ok":      code,
 		"message": msg,
 	}, "data": data})
 }
