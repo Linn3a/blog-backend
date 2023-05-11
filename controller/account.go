@@ -1,68 +1,59 @@
 package controller
 
 import (
-	// "blog/models"
-	// "blog/response"
+	"blog/models"
+	"blog/response"
 	"github.com/gin-gonic/gin"
+	"log"
+	"time"
 	// "golang.org/x/crypto/bcrypt"
 	"net/http"
-	"encoding/json"
 	// "strconv"
 )
 
 // Register 注册
-// {
-//   "Username": "余霞",
-//   "Password": "dolore",
-//   "Desc": "cillum cupidatat",
-//   "Gender": 2
-// }
+//
+//	{
+//	  "Username": "余霞",
+//	  "Password": "dolore",
+//	  "Desc": "cillum cupidatat",
+//	  "Gender": 2
+//	}
 func Register(c *gin.Context) {
-	// ,db *gorm.DB
-	// db := common.GetDB()
-	// 获取参数
-	// var requestUser models.User
-	
-	b,_ := c.GetRawData()
-	var newer map[string]interface{}
-// 用interface{} 表示接收任意对象
-// 返回值是一个接口
-	_ = json.Unmarshal(b,&newer)
-	// c.Bind(&requestUser)
-	// username := newer.username
-	// password := newer.password
-	// gender	 := newer.gender
+
+	db := models.GetDB()
+	var requestUser models.User
+	c.Bind(&requestUser)
+	username := requestUser.Username
+	password := requestUser.Password
+	gender := requestUser.Gender
+	log.Println(username)
+	log.Println(password)
+	log.Println(gender)
 	// 数据验证
-	// var user model.User
-	// db.Where("username=?",username).First(&user)
-	// if user.ID != 0 {
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 		"code": 422,
-	// 		"msg":  "用户已存在",
-	// 	})
-	// 	return
-	// }
-	
-	// 创建用户
-	// newUser := model.User{
-	// 	Username: 	username,	
-	// 	Password: 	password,
-	// 	Avatar:		"/images/default_avatar.png"
-	// 	IsAdmin:	false
-	// }
-	// err := db.Omit("Username", "Password", "Avatar","IsAdmin").Create(&newUser).Error
-	// if err != nil {
-	// 	c.JSON(http.StatusOK, gin.H{
-	// 		"code": 500,
-	// 		"msg":  "注册失败",
-	// 	})
-	// 	return
-	// }
+	var user models.User
+	models.DB.Where("username=?", username).First(&user)
+	if user.Id != 0 {
+		response.Response(c, http.StatusOK, false, nil, "用户名已存在")
+		return
+	}
+	newUser := models.User{
+		Username:  username,
+		Password:  password,
+		Gender:    gender,
+		Avatar:    "https://img.js.design/assets/img/645650aca30d747a6da0787b.jpg#208a42317334f6b46f2c03fcf9c101bd",
+		IsAdmin:   false,
+		Birthday:  time.Now(),
+		LastLogin: time.Now(),
+	}
+
+	err := db.Create(&newUser).Error
+	log.Println(&newUser.Id)
+	if err != nil {
+		response.Response(c, http.StatusOK, false, nil, "注册失败")
+		return
+	}
 	// 返回结果
-	c.JSON(http.StatusOK,
-		gin.H{"status":  
-		gin.H{"code": true,
-		"msg":  "注册成功"},
-		"data":	newer,
-	})
+	response.Response(c, http.StatusOK, true, gin.H{"id": newUser.Id}, "注册成功")
+
 }
