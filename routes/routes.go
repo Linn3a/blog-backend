@@ -2,12 +2,13 @@ package routes
 
 import (
 	"blog/controller"
+	"blog/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 func CollectRoutes(r *gin.Engine) *gin.Engine {
 	// 允许跨域访问
-	// r.Use(middleware.CORSMiddleware())
+	r.Use(middleware.CORSMiddleware())
 	// 注册
 	r.POST("/user", controller.Register)
 	// 登录
@@ -16,6 +17,7 @@ func CollectRoutes(r *gin.Engine) *gin.Engine {
 	r.DELETE("/user/:id", controller.DeleteUser)
 	r.GET("/user", controller.GetAllUser)
 	r.GET("user/:id", controller.GetUser)
+	r.PUT("admin/:id", controller.ChangeAdminState)
 
 	r.GET("/cate", controller.GetAllCates)
 	r.GET("/cate/:id", controller.GetCate)

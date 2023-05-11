@@ -16,10 +16,11 @@ func Register(c *gin.Context) {
 
 	db := models.GetDB()
 	var requestUser models.User
-	bindErr := c.Bind(&requestUser).Error()
-	if bindErr != "" {
+	bindErr := c.ShouldBind(&requestUser)
+	if bindErr != nil {
 		response.Response(c, http.StatusOK, false, nil, "解析请求数据失败")
 	}
+	log.Println(requestUser)
 	username := requestUser.Username
 	password := requestUser.Password
 	gender := requestUser.Gender
@@ -102,7 +103,9 @@ func UpdateUser(c *gin.Context) {
 	bindErr := c.Bind(&requestUser)
 	if bindErr != nil {
 		response.Response(c, http.StatusOK, false, nil, "解析请求数据失败")
+		return
 	}
+	log.Println(requestUser)
 	if requestUser.Password != "" {
 		hashedNewPassword, err := bcrypt.GenerateFromPassword([]byte(requestUser.Password), bcrypt.DefaultCost)
 		if err != nil {
@@ -126,6 +129,29 @@ func UpdateUser(c *gin.Context) {
 	}
 	response.Response(c, http.StatusOK, true, nil, "用户信息更新成功")
 	return
+}
+
+// 由于gorm存在false字段拒绝更新的特性 把更改管理员权限单独拿出来写
+type adminState struct {
+	IsAdmin bool `json:"is_admin"`
+}
+
+func ChangeAdminState(c *gin.Context) {
+	db := models.GetDB()
+	userid := c.Param("id")
+	var requestState adminState
+	bindErr := c.ShouldBind(&requestState)
+	if bindErr != nil {
+		response.Response(c, http.StatusOK, false, nil, "解析请求数据失败")
+		return
+	}
+	isAdmin := requestState.IsAdmin
+	err := db.Model(&models.User{}).Where("Id=?", userid).Updates(map[string]interface{}{"IsAdmin": isAdmin}).Error
+	if err != nil {
+		response.Response(c, http.StatusOK, false, nil, "用户管理权限更新失败")
+		return
+	}
+	response.Response(c, http.StatusOK, true, nil, "用户管理权限更新成功")
 }
 
 type userinfo struct {
