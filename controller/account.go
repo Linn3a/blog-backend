@@ -166,7 +166,7 @@ type userinfo struct {
 func GetAllUser(c *gin.Context) {
 	db := models.GetDB()
 	var users []userinfo
-	err := db.Model(models.User{}).Limit(10).Find(&users).Error
+	err := db.Model(models.User{}).Find(&users).Error
 	if err != nil {
 		response.Response(c, http.StatusOK, false, nil, "获取用户信息失败")
 		return

@@ -8,7 +8,11 @@ type Passage struct {
 	Content   string    `json:"content" binding:"-"`
 	Desc      string    `json:"desc"`
 	CreatedAt time.Time `json:"created_at" binding:"-"`
-	CateId    int       `json:"cate_id"`
+	//has many
+	Comments Comments
+	//many to many
+	Tags   Tags `gorm:"many2many:tag_passages;"`
+	CateId uint
 }
 
 type Passages []*Passage

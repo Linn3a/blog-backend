@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 // GetPassageContent r.GET("/p/:id", controller.GetPassageContent)
@@ -19,8 +18,9 @@ func GetPassageContent(c *gin.Context) {
 		response.Response(c, http.StatusOK, false, gin.H{"error": err}, "获取文章内容失败")
 		return
 	}
-	var tagsId uint
-	err = db.Model(models.TagPassages{}).Find(&tagsId, "PassageId=?", PassageId)
+	var tagsId []uint
+	err = db.Model(&models.Tag{}).Preload("Passages").Find(&tagsId)
+	//err = db.Model(models.TagPassages{}).Find(&tagsId, "PassageId=?", PassageId)
 	if err != nil {
 		response.Response(c, http.StatusOK, false, gin.H{"error": err}, "获取文章标签失败")
 		return
@@ -109,7 +109,7 @@ func UpdatePassage(c *gin.Context) {
 		return
 	}
 	log.Print(requestPassage)
-	tags := requestPassage.Tags
+	//tags := requestPassage.Tags
 	newPassage := requestPassage.Passage
 	log.Println(newPassage)
 	//if bindErr != nil {
@@ -121,19 +121,19 @@ func UpdatePassage(c *gin.Context) {
 		response.Response(c, http.StatusOK, false, nil, "文章信息更新失败")
 		return
 	}
-	var tagedpassages []models.TagPassage
-	passageId, _ := strconv.Atoi(PassageId)
-	for _, value := range tags {
-		tagedpassages = append(tagedpassages, models.TagPassage{
-			PassageId: passageId,
-			TagId:     value,
-		})
-	}
-	err = db.Save(&tagedpassages).Error
-	if err != nil {
-		response.Response(c, http.StatusOK, false, nil, "文章标签插入失败")
-		return
-	}
+	//var tagedpassages []models.TagPassage
+	//passageId, _ := strconv.Atoi(PassageId)
+	//for _, value := range tags {
+	//	tagedpassages = append(tagedpassages, models.TagPassage{
+	//		PassageId: passageId,
+	//		TagId:     value,
+	//	})
+	//}
+	//err = db.Save(&tagedpassages).Error
+	//if err != nil {
+	//	response.Response(c, http.StatusOK, false, nil, "文章标签插入失败")
+	//	return
+	//}
 	response.Response(c, http.StatusOK, true, nil, "文章信息更新成功")
 	return
 }

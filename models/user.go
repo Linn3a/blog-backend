@@ -2,7 +2,6 @@ package models
 
 import (
 	_ "gorm.io/driver/mysql"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -17,16 +16,8 @@ type User struct {
 	Birthday  time.Time `json:"birthday" binding:"-"`
 	LastLogin time.Time `json:"last_login" binding:"-"`
 	CreatedAt time.Time `json:"created_at" binding:"-"`
+	Comments  Comments
+	Passages  Passages `gorm:"many2many:star_passages;"`
 }
 
 type Users []*User
-
-func CreateUser(user User, db *gorm.DB) (err error) {
-	err = db.Create(&user).Error
-	return err
-}
-
-func GetUserById(id int, db *gorm.DB) (user User, err error) {
-	err = db.Where("id = ?", id).First(&user).Error
-	return user, err
-}
