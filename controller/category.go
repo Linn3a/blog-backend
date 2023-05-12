@@ -9,17 +9,16 @@ import (
 )
 
 type Cateinfo struct {
-	Id    int         `json:"id"`
-	Name  string      `json:"name"`
-	Cover string      `json:"cover"`
-	Tags  models.Tags `json:"tags"`
+	Id    int    `json:"id" binging:"-"`
+	Name  string `json:"name"`
+	Cover string `json:"cover"`
 }
 
 // GetAllCates 	r.GET("/cate", controller.GetAllCates)
 func GetAllCates(c *gin.Context) {
 	db := models.GetDB()
-	var cates Cateinfo
-	err := db.Model(models.Cate{}).Preload("Tags").Find(&cates)
+	var cates []models.Cate
+	err := db.Model(models.Cate{}).Preload("Tags").Find(&cates).Error
 	if err != nil {
 		response.Response(c, http.StatusOK, false, nil, "读取数据库失败")
 		return
@@ -33,20 +32,75 @@ func GetAllCates(c *gin.Context) {
 
 // GetCate 	r.GET("/cate/:id", controller.GetCate)
 func GetCate(c *gin.Context) {
-	//	TODO
+	db := models.GetDB()
+	cateid := c.Param("id")
+	var cate models.Cate
+	err := db.Model(models.Cate{}).Preload("Passages").Find(&cate, cateid).Error
+	if err != nil {
+		response.Response(c, http.StatusOK, false, nil, "读取数据库失败")
+		return
+	}
+	log.Println(cate)
+	response.Response(c, http.StatusOK, true, gin.H{
+		"cates": cate,
+	}, "获取成功")
+	return
+
 }
 
 // CreateCate 	r.POST("/cate", controller.CreateCate)
 func CreateCate(c *gin.Context) {
-	//	TODO
+	db := models.GetDB()
+	var requestCate models.Cate
+	err := c.ShouldBind(&requestCate)
+	if err != nil {
+		response.Response(c, http.StatusOK, false, nil, "解析请求数据失败")
+	}
+	catename := requestCate.Name
+	var cate models.Cate
+	models.DB.Where("name=?", catename).First(&cate)
+	if cate.Id != 0 {
+		response.Response(c, http.StatusOK, false, nil, "该类已存在")
+		return
+	}
+
+	err = db.Create(&requestCate).Error
+	log.Println(&requestCate.Id)
+	if err != nil {
+		response.Response(c, http.StatusOK, false, nil, "添加新类别失败")
+		return
+	}
+	response.Response(c, http.StatusOK, true, gin.H{"id": requestCate.Id}, "添加新类别成功")
 }
 
 // UpdateCate 	r.PUT("/cate/:id", controller.UpdateCate)
 func UpdateCate(c *gin.Context) {
-	//	TODO
+	db := models.GetDB()
+	var requestCate models.Cate
+	err := c.ShouldBind(&requestCate)
+	if err != nil {
+		response.Response(c, http.StatusOK, false, nil, "解析请求数据失败")
+		return
+	}
+	err = db.Save(&requestCate).Error
+	if err != nil {
+		response.Response(c, http.StatusOK, false, nil, "更新数据库失败")
+		log.Println(err)
+		return
+	}
+	response.Response(c, http.StatusOK, true, nil, "更新类别数据成功")
+
 }
 
 // DeleteCate 	r.DELETE("/cate/:id", controller.DeleteCate)
 func DeleteCate(c *gin.Context) {
-	//	TODO
+	db := models.GetDB()
+	cateid := c.Param("id")
+	err := db.Delete(&models.Cate{}, cateid).Error
+	if err != nil {
+		response.Response(c, http.StatusOK, false, nil, "删除类别失败")
+		return
+	}
+	response.Response(c, http.StatusOK, true, nil, "删除类别成功")
+	return
 }
