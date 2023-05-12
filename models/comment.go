@@ -5,8 +5,8 @@ import "time"
 type Comment struct {
 	Id        uint
 	Content   string
-	UserId    int
-	PassageId int
+	UserId    uint `json:"user_id"`
+	PassageId uint `json:"passage_id"`
 	CreatedAt time.Time
 }
 

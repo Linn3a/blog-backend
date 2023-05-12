@@ -163,7 +163,7 @@ type userinfo struct {
 	IsAdmin   bool   `json:"is_admin"`
 }
 
-func GetAllUser(c *gin.Context) {
+func GetAllUsers(c *gin.Context) {
 	db := models.GetDB()
 	var users []userinfo
 	err := db.Model(models.User{}).Find(&users).Error
@@ -180,37 +180,27 @@ func GetUser(c *gin.Context) {
 	db := models.GetDB()
 	userid := c.Param("id")
 	var user models.User
-	err := db.Find(&user, userid)
+	err := db.Model(&models.User{}).Preload("Passages").Preload("Comments").Find(&user, userid).Error
 	if err != nil {
 		response.Response(c, http.StatusOK, false, nil, "获取用户信息失败")
 		return
 	}
-	var stars models.Stars
-	err = db.Find(&stars, "UserId=?", userid)
-	if err != nil {
-		response.Response(c, http.StatusOK, false, nil, "获取用户收藏文章失败")
-		return
-	}
-	log.Println(stars)
-	var comments models.Comments
-	err = db.Find(&comments, "UserId=?", userid)
-	if err != nil {
-		response.Response(c, http.StatusOK, false, nil, "获取用户发出评论失败")
-		return
-	}
-	log.Println(comments)
+	//var stars models.Stars
+	//err = db.Find(&stars, "UserId=?", userid)
+	//if err != nil {
+	//	response.Response(c, http.StatusOK, false, nil, "获取用户收藏文章失败")
+	//	return
+	//}
+	//log.Println(stars)
+	//var comments models.Comments
+	//err = db.Find(&comments, "UserId=?", userid)
+	//if err != nil {
+	//	response.Response(c, http.StatusOK, false, nil, "获取用户发出评论失败")
+	//	return
+	//}
+	//log.Println(comments)
 	response.Response(c, http.StatusOK, true, gin.H{
-		"id":         user.Id,
-		"username":   user.Username,
-		"avatar":     user.Avatar,
-		"desc":       user.Desc,
-		"gender":     user.Gender,
-		"birthday":   user.Birthday,
-		"last_login": user.LastLogin,
-		"created_at": user.CreatedAt,
-		"is_admin":   user.IsAdmin,
-		"stared_pas": stars,
-		"comments":   comments,
+		"user": user,
 	}, "获取用户信息成功")
 
 }

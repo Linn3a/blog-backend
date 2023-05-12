@@ -1,13 +1,33 @@
 package controller
 
-import "github.com/gin-gonic/gin"
+import (
+	"blog/models"
+	"blog/response"
+	"github.com/gin-gonic/gin"
+)
 
 // CreateComment r.POST("/comment",CreateComment)
 func CreateComment(c *gin.Context) {
-	//	TODO
+	db := models.GetDB()
+	var requestComment models.Comment
+	err := c.ShouldBind(&requestComment)
+	if err != nil {
+		response.Fail(c, "解析请求数据失败")
+	}
+	err = db.Create(&requestComment).Error
+	if err != nil {
+		response.Fail(c, "新增评论失败")
+	}
+	response.Success(c, gin.H{"id": requestComment.Id}, "新增评论成功")
 }
 
 // DeleteComment r.DELETE("/comment",DeleteComment)
 func DeleteComment(c *gin.Context) {
-	//	TODO
+	db := models.GetDB()
+	commentId := c.Param("id")
+	err := db.Delete(&models.Comment{}, commentId).Error
+	if err != nil {
+		response.Fail(c, "删除评论失败")
+	}
+	response.Success(c, nil, "删除评论成功")
 }

@@ -4,7 +4,7 @@ import "time"
 
 type Star struct {
 	UserId		uint
-	PassageId	int
+	PassageId	uint
 	CreatedAt	time.Time
 }
 

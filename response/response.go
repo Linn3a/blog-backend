@@ -18,6 +18,6 @@ func Success(c *gin.Context, data gin.H, msg string) {
 }
 
 // Fail 失败
-func Fail(c *gin.Context, data gin.H, msg string) {
-	Response(c, http.StatusOK, false, data, msg)
+func Fail(c *gin.Context, msg string) {
+	Response(c, http.StatusOK, false, nil, msg)
 }

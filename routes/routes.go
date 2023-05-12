@@ -15,7 +15,7 @@ func CollectRoutes(r *gin.Engine) *gin.Engine {
 	r.POST("/login", controller.Login)
 	r.PUT("user/:id", controller.UpdateUser)
 	r.DELETE("/user/:id", controller.DeleteUser)
-	r.GET("/user", controller.GetAllUser)
+	r.GET("/user", controller.GetAllUsers)
 	r.GET("user/:id", controller.GetUser)
 	r.PUT("admin/:id", controller.ChangeAdminState)
 
@@ -25,17 +25,19 @@ func CollectRoutes(r *gin.Engine) *gin.Engine {
 	r.PUT("/cate/:id", controller.UpdateCate)
 	r.DELETE("/cate/:id", controller.DeleteCate)
 
+	r.GET("/p", controller.GetAllPassages)
 	r.GET("/p/:id", controller.GetPassageContent)
 	r.POST("/p", controller.CreatePassage)
 	r.DELETE("/p/:id", controller.DeletePassage)
 	r.PUT("/p/:id", controller.UpdatePassage)
 
+	r.GET("/tag", controller.GetAllTags)
 	r.GET("/tag/:id", controller.GetTag)
 	r.POST("/tag", controller.CreateTag)
 	r.DELETE("/tag/:id", controller.DeleteTag)
 
 	r.POST("/comment", controller.CreateComment)
-	r.DELETE("/comment", controller.DeleteComment)
+	r.DELETE("/comment/:id", controller.DeleteComment)
 
 	// // 上传图像
 	// r.POST("/upload", controller.Upload)
