@@ -9,7 +9,7 @@ type Passage struct {
 	Desc      string    `json:"desc"`
 	CreatedAt time.Time `json:"created_at" binding:"-"`
 	//has many
-	Comments Comments
+	Comments Comments `json:"comments"`
 	//many to many
 	Tags   Tags `gorm:"many2many:tag_passages;"`
 	CateId uint `json:"cate_id"`

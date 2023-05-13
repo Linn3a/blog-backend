@@ -16,8 +16,8 @@ type User struct {
 	Birthday  time.Time `json:"birthday" binding:"-"`
 	LastLogin time.Time `json:"last_login" binding:"-"`
 	CreatedAt time.Time `json:"created_at" binding:"-"`
-	Comments  Comments
-	Passages  Passages `gorm:"many2many:star_passages;"`
+	Comments  Comments  `json:"comments"`
+	Passages  Passages  `gorm:"many2many:star_passages;"`
 }
 
 type Users []*User

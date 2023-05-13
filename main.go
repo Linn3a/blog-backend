@@ -5,6 +5,7 @@ import (
 	"blog/routes"
 	gin "github.com/gin-gonic/gin"
 	"log"
+	"net/http"
 )
 
 func main() {
@@ -18,6 +19,7 @@ func main() {
 	defer a.Close()
 	r := gin.Default()
 	// 配置静态文件路径
+	r.StaticFS("/images", http.Dir("./static/images"))
 	// 启动路由
 	routes.CollectRoutes(r)
 	// 启动服务

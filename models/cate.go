@@ -1,12 +1,12 @@
 package models
 
 type Cate struct {
-	Id    uint
-	Name  string
-	Cover string
+	Id    uint   `json:"id"`
+	Name  string `json:"name"`
+	Cover string `json:"cover"`
 	//has many
-	Passages Passages
-	Tags     Tags
+	Passages Passages `json:"passages"`
+	Tags     Tags     `json:"tags"`
 }
 
 type Cates []*Cate

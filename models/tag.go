@@ -1,9 +1,9 @@
 package models
 
 type Tag struct {
-	Id       uint
-	Name     string
-	Color    string
+	Id       uint     `json:"id"`
+	Name     string   `json:"name"`
+	Color    string   `json:"color"`
 	CateId   uint     `json:"cate_id"`
 	Passages Passages `gorm:"many2many:tag_passages;"`
 }
