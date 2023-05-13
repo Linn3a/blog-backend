@@ -76,13 +76,14 @@ func CreateCate(c *gin.Context) {
 // UpdateCate 	r.PUT("/cate/:id", controller.UpdateCate)
 func UpdateCate(c *gin.Context) {
 	db := models.GetDB()
+	cate_id := c.Param("id")
 	var requestCate models.Cate
 	err := c.ShouldBind(&requestCate)
 	if err != nil {
 		response.Response(c, http.StatusOK, false, nil, "解析请求数据失败")
 		return
 	}
-	err = db.Save(&requestCate).Error
+	err = db.Model(&models.Cate{}).Where("id=?", cate_id).Updates(&requestCate).Error
 	if err != nil {
 		response.Response(c, http.StatusOK, false, nil, "更新数据库失败")
 		log.Println(err)

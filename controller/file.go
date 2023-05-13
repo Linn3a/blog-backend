@@ -31,5 +31,5 @@ func Upload(c *gin.Context) {
 		response.Response(c, http.StatusInternalServerError, false, nil, "复制错误")
 		return
 	}
-	response.Success(c, gin.H{"filePath": "/images/" + newFilename}, "上传成功")
+	response.Success(c, gin.H{"url": "http://127.0.0.1:8080/images/" + newFilename}, "上传成功")
 }
