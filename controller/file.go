@@ -4,6 +4,7 @@ import (
 	"blog/response"
 	"github.com/gin-gonic/gin"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path"
@@ -13,6 +14,7 @@ import (
 func Upload(c *gin.Context) {
 	file, header, err := c.Request.FormFile("file")
 	if err != nil {
+		log.Println(err)
 		response.Response(c, http.StatusInternalServerError, false, nil, "格式错误")
 		return
 	}

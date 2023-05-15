@@ -18,7 +18,9 @@ func Register(c *gin.Context) {
 	var requestUser models.User
 	bindErr := c.ShouldBind(&requestUser)
 	if bindErr != nil {
+		log.Println(bindErr)
 		response.Response(c, http.StatusOK, false, nil, "解析请求数据失败")
+		return
 	}
 	log.Println(requestUser)
 	username := requestUser.Username
@@ -63,24 +65,31 @@ func Login(c *gin.Context) {
 	var requestUser models.User
 	bindErr := c.Bind(&requestUser)
 	if bindErr != nil {
-		response.Response(c, http.StatusOK, false, nil, "解析请求数据失败")
+		response.Fail(c, "解析请求数据失败")
+		return
 	}
 	username := requestUser.Username
 	password := requestUser.Password
 	var user models.User
 	db.Where("username=?", username).First(&user)
 	if user.Id == 0 {
-		response.Response(c, http.StatusOK, false, nil, "用户不存在")
+		response.Fail(c, "用户不存在")
 		return
 	}
 
 	// Compare the hashed password with the stored hash
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		response.Response(c, http.StatusOK, false, nil, "密码错误")
+		response.Fail(c, "密码错误")
 		return
 	}
-
-	response.Response(c, http.StatusOK, false, gin.H{"user": user}, "登录成功")
+	Token, err := GenToken(user.Id, user.Username, user.Avatar)
+	if err != nil {
+		response.Fail(c, "生成token失败")
+	}
+	response.Success(c, gin.H{
+		"user":  user,
+		"Token": Token,
+	}, "登录成功")
 	return
 }
 
@@ -203,4 +212,31 @@ func GetUser(c *gin.Context) {
 		"user": user,
 	}, "获取用户信息成功")
 
+}
+
+type requsettoken struct {
+	Token string
+}
+
+func Autologin(c *gin.Context) {
+	var currentToken requsettoken
+	err := c.ShouldBind(&currentToken)
+	if err != nil {
+		response.Fail(c, "解析请求数据失败")
+		log.Println(err)
+		return
+	}
+	currentUser, err := ParseToken(currentToken.Token)
+
+	if err != nil {
+		log.Println(err)
+		log.Println(currentUser)
+		response.Fail(c, "解析Token失败")
+		return
+	}
+	response.Success(c, gin.H{
+		"id":       currentUser.UserID,
+		"username": currentUser.Username,
+		"avatar":   currentUser.Avatar,
+	}, "获取用户数据成功")
 }

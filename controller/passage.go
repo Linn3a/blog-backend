@@ -12,7 +12,7 @@ import (
 func GetAllPassages(c *gin.Context) {
 	db := models.GetDB()
 	var passages models.Passages
-	err := db.Select([]string{"id", "title", "desc", "created_at", "cate_id"}).Find(&passages).Error
+	err := db.Model(&models.Passage{}).Preload("Tags").Select([]string{"id", "title", "desc", "created_at", "cate_id"}).Find(&passages).Error
 	if err != nil {
 		response.Fail(c, "获取文章数据失败")
 		return

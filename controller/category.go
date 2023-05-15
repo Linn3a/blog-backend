@@ -35,14 +35,14 @@ func GetCate(c *gin.Context) {
 	db := models.GetDB()
 	cateid := c.Param("id")
 	var cate models.Cate
-	err := db.Model(models.Cate{}).Preload("Passages").Find(&cate, cateid).Error
+	err := db.Model(models.Cate{}).Preload("Passages").Preload("Passages.Tags").Preload("Tags").Find(&cate, cateid).Error
 	if err != nil {
 		response.Response(c, http.StatusOK, false, nil, "读取数据库失败")
 		return
 	}
 	log.Println(cate)
 	response.Response(c, http.StatusOK, true, gin.H{
-		"cates": cate,
+		"cate": cate,
 	}, "获取成功")
 	return
 

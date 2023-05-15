@@ -11,7 +11,7 @@ type Passage struct {
 	//has many
 	Comments Comments `json:"comments"`
 	//many to many
-	Tags   Tags `gorm:"many2many:tag_passages;"`
+	Tags   Tags `gorm:"many2many:tag_passages;" json:"tags"`
 	CateId uint `json:"cate_id"`
 }
 

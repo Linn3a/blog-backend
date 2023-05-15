@@ -13,6 +13,7 @@ func CollectRoutes(r *gin.Engine) *gin.Engine {
 	r.POST("/user", controller.Register)
 	// 登录
 	r.POST("/login", controller.Login)
+	r.POST("/autologin", controller.Autologin)
 	r.PUT("user/:id", controller.UpdateUser)
 	r.DELETE("/user/:id", controller.DeleteUser)
 	r.GET("/user", controller.GetAllUsers)
