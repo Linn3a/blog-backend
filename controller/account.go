@@ -84,7 +84,7 @@ func Login(c *gin.Context) {
 		response.Fail(c, "密码错误")
 		return
 	}
-	Token, err := GenToken(user.Id, user.Username, user.Avatar)
+	Token, err := GenToken(user.Id)
 	if err != nil {
 		response.Fail(c, "生成token失败")
 	}
@@ -230,6 +230,7 @@ type requsettoken struct {
 }
 
 func Autologin(c *gin.Context) {
+	db := models.GetDB()
 	var currentToken requsettoken
 	err := c.ShouldBind(&currentToken)
 	if err != nil {
@@ -238,16 +239,21 @@ func Autologin(c *gin.Context) {
 		return
 	}
 	currentUser, err := ParseToken(currentToken.Token)
-
 	if err != nil {
 		log.Println(err)
 		log.Println(currentUser)
 		response.Fail(c, "解析Token失败")
 		return
 	}
+	var user models.User
+	err = db.First(&user, currentUser.UserID).Error
+	if err != nil {
+		response.Fail(c, "获取用户数据失败")
+	}
+
 	response.Success(c, gin.H{
 		"id":       currentUser.UserID,
-		"username": currentUser.Username,
-		"avatar":   currentUser.Avatar,
+		"username": user.Username,
+		"avatar":   user.Avatar,
 	}, "获取用户数据成功")
 }

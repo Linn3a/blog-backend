@@ -8,21 +8,17 @@ import (
 
 type CustomClaims struct {
 	// 可根据需要自行添加字段
-	UserID               uint   `json:"user_id"`
-	Username             string `json:"username"`
-	Avatar               string `json:"avatar"`
-	jwt.RegisteredClaims        // 内嵌标准的声明
+	UserID               uint `json:"user_id"`
+	jwt.RegisteredClaims      // 内嵌标准的声明
 }
 
 // GenToken 生成JWT
 var mySigningkey = []byte("secret")
 
-func GenToken(userId uint, username string, avatar string) (string, error) {
+func GenToken(userId uint) (string, error) {
 	// 创建一个我们自己声明的数据
 	claims := CustomClaims{
 		userId,
-		username, // 自定义字段
-		avatar,
 		jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 72)), // 定义过期时间
 			Issuer:    "cos",                                              // 签发人
