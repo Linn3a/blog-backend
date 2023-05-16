@@ -7,6 +7,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 	// "strconv"
 )
@@ -239,4 +240,25 @@ func Autologin(c *gin.Context) {
 		"username": currentUser.Username,
 		"avatar":   currentUser.Avatar,
 	}, "获取用户数据成功")
+}
+
+func CreateStar(c *gin.Context) {
+	db := models.GetDB()
+	userId := c.Param("userId")
+	passageId := c.Param("passageId")
+	uid, _ := strconv.Atoi(userId)
+	log.Println(uid)
+	pid, _ := strconv.Atoi(passageId)
+	log.Println(pid)
+	user := models.User{
+		Id: uint(uid),
+	}
+	log.Println(user)
+
+	err := db.Model(&user).Association("Passages").Append(&models.Passage{Id: uint(pid)})
+	if err != nil {
+		response.Fail(c, "插入失败")
+		return
+	}
+	response.Success(c, nil, "插入成功")
 }

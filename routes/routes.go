@@ -20,6 +20,8 @@ func CollectRoutes(r *gin.Engine) *gin.Engine {
 	r.GET("user/:id", controller.GetUser)
 	r.PUT("admin/:id", controller.ChangeAdminState)
 
+	r.POST("star/:userId/:passageId", controller.CreateStar)
+
 	r.GET("/cate", controller.GetAllCates)
 	r.GET("/cate/:id", controller.GetCate)
 	r.POST("/cate", controller.CreateCate)
