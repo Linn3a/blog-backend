@@ -5,8 +5,10 @@ import (
 	"blog/response"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm/clause"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 	// "strconv"
 )
@@ -96,7 +98,16 @@ func Login(c *gin.Context) {
 func DeleteUser(c *gin.Context) {
 	db := models.GetDB()
 	userid := c.Param("id")
-	err := db.Delete(&models.User{}, userid).Error
+	uid, _ := strconv.Atoi(userid)
+	//err := db.Where("user_id = ?", uint(uid)).Delete(&models.Comment{}).Error
+	//if err != nil {
+	//	response.Fail(c, "删除该用户发出评论失败")
+	//	return
+	//}
+	user := models.User{
+		Id: uint(uid),
+	}
+	err := db.Select(clause.Associations).Delete(&user).Error
 	if err != nil {
 		response.Response(c, http.StatusOK, false, nil, "注销用户失败")
 		return

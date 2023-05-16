@@ -41,6 +41,7 @@ func CollectRoutes(r *gin.Engine) *gin.Engine {
 	r.POST("/tag", controller.CreateTag)
 	r.DELETE("/tag/:id", controller.DeleteTag)
 
+	r.GET("/comment/:id", controller.GetCommentsbyPassageId)
 	r.POST("/comment", controller.CreateComment)
 	r.DELETE("/comment/:id", controller.DeleteComment)
 

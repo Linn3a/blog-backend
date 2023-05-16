@@ -4,8 +4,10 @@ import (
 	"blog/models"
 	"blog/response"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/clause"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -82,10 +84,8 @@ func CreatePassage(c *gin.Context) {
 		response.Response(c, http.StatusOK, false, gin.H{"error": bindErr}, "解析请求数据失败")
 		log.Println(bindErr)
 	}
-	log.Println(requestPassage)
 
 	err := db.Create(&requestPassage).Error
-	log.Println(&requestPassage.Id)
 	if err != nil {
 		response.Response(c, http.StatusOK, false, gin.H{"error": err}, "添加文章失败")
 		return
@@ -98,7 +98,11 @@ func CreatePassage(c *gin.Context) {
 func DeletePassage(c *gin.Context) {
 	db := models.GetDB()
 	PassageId := c.Param("id")
-	err := db.Delete(&models.Passage{}, PassageId).Error
+	pid, _ := strconv.Atoi(PassageId)
+	passage := models.Passage{
+		Id: uint(pid),
+	}
+	err := db.Select(clause.Associations).Delete(&passage).Error
 	if err != nil {
 		response.Response(c, http.StatusOK, false, gin.H{"error": err}, "删除文章失败")
 		return
