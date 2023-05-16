@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"time"
 )
 
 // GetAllPassages r.GET("/p",controller.GetAllPassages)
@@ -21,6 +22,17 @@ func GetAllPassages(c *gin.Context) {
 }
 
 // GetPassageContent r.GET("/p/:id", controller.GetPassageContent)
+
+type responsecomment struct {
+	Id        uint      `json:"id"`
+	Content   string    `json:"content"`
+	UserId    uint      `json:"user_id"`
+	Username  string    `json:"username"`
+	Avatar    string    `json:"avatar"`
+	PassageId uint      `json:"passage_id"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
 func GetPassageContent(c *gin.Context) {
 	db := models.GetDB()
 	PassageId := c.Param("id")
@@ -31,9 +43,32 @@ func GetPassageContent(c *gin.Context) {
 		response.Response(c, http.StatusOK, false, nil, "获取文章内容失败")
 		return
 	}
-
+	var responsecomments []responsecomment
+	var result models.User
+	for i := 0; i < len(passage.Comments); i++ {
+		log.Println(passage.Comments[i].UserId)
+		db.First(&result, passage.Comments[i].UserId)
+		responsecomments = append(responsecomments, responsecomment{
+			Id:        passage.Comments[i].Id,
+			Content:   passage.Comments[i].Content,
+			UserId:    passage.Comments[i].UserId,
+			Username:  result.Username,
+			Avatar:    result.Avatar,
+			PassageId: passage.Comments[i].PassageId,
+			CreatedAt: passage.Comments[i].CreatedAt,
+		})
+	}
 	response.Response(c, http.StatusOK, true, gin.H{
-		"passage": passage,
+		"passage": gin.H{
+			"id":         passage.Id,
+			"title":      passage.Title,
+			"content":    passage.Content,
+			"desc":       passage.Desc,
+			"created_at": passage.CreatedAt,
+			"comments":   responsecomments,
+			"tags":       passage.Tags,
+			"cate_id":    passage.CateId,
+		},
 	}, "获取文章内容成功")
 
 }
