@@ -46,10 +46,12 @@ func GetPassageContent(c *gin.Context) {
 		return
 	}
 	var responsecomments []responsecomment
-	var result models.User
+
 	for i := 0; i < len(passage.Comments); i++ {
 		log.Println(passage.Comments[i].UserId)
+		var result models.User
 		db.First(&result, passage.Comments[i].UserId)
+		log.Println(result.Username)
 		responsecomments = append(responsecomments, responsecomment{
 			Id:        passage.Comments[i].Id,
 			Content:   passage.Comments[i].Content,
