@@ -116,12 +116,22 @@ func DeleteUser(c *gin.Context) {
 	return
 }
 
+// 先拿到 再解析
+type requsetbody struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Avatar   string `json:"avatar" binding:"-"`
+	Birthday string `json:"birthday" `
+}
+
 func UpdateUser(c *gin.Context) {
 	db := models.GetDB()
 	userid := c.Param("id")
+	//var requestUser requsetbody
 	var requestUser models.User
-	bindErr := c.Bind(&requestUser)
+	bindErr := c.ShouldBind(&requestUser)
 	if bindErr != nil {
+		log.Println(bindErr)
 		response.Response(c, http.StatusOK, false, nil, "解析请求数据失败")
 		return
 	}
@@ -196,6 +206,14 @@ func GetAllUsers(c *gin.Context) {
 	return
 }
 
+type responseComment struct {
+	Id        uint      `json:"id"`
+	Content   string    `json:"content"`
+	PassageId uint      `json:"passage_id"`
+	CreatedAt time.Time `json:"created_at"`
+	Title     string    `json:"title"`
+}
+
 func GetUser(c *gin.Context) {
 	db := models.GetDB()
 	userid := c.Param("id")
@@ -205,8 +223,48 @@ func GetUser(c *gin.Context) {
 		response.Response(c, http.StatusOK, false, nil, "获取用户信息失败")
 		return
 	}
+
+	p := make(map[uint]string)
+	var newComments []responseComment
+	for i := 0; i < len(user.Comments); i++ {
+		now, ok := p[user.Comments[i].PassageId]
+		if ok == true {
+			newComments = append(newComments, responseComment{
+				Id:        user.Comments[i].Id,
+				Content:   user.Comments[i].Content,
+				PassageId: user.Comments[i].PassageId,
+				CreatedAt: user.Comments[i].CreatedAt,
+				Title:     now,
+			})
+		} else {
+			var passage models.Passage
+			db.Find(&passage, user.Comments[i].PassageId)
+			p[user.Comments[i].PassageId] = passage.Title
+			newComments = append(newComments, responseComment{
+				Id:        user.Comments[i].Id,
+				Content:   user.Comments[i].Content,
+				PassageId: user.Comments[i].PassageId,
+				CreatedAt: user.Comments[i].CreatedAt,
+				Title:     passage.Title,
+			})
+		}
+	}
+
+	for i := 0; i < len(user.Passages); i++ {
+		user.Passages[i].Content = ""
+	}
 	response.Response(c, http.StatusOK, true, gin.H{
-		"user": user,
+		//"user": user,
+		"user": gin.H{
+			"id":       user.Id,
+			"username": user.Username,
+			"desc":     user.Desc,
+			"gender":   user.Gender,
+			"avatar":   user.Avatar,
+			"birthday": user.Birthday,
+			"passages": user.Passages,
+			"comments": newComments,
+		},
 	}, "获取用户信息成功")
 
 }

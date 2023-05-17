@@ -4,6 +4,7 @@ import (
 	"blog/models"
 	"blog/response"
 	"github.com/gin-gonic/gin"
+	"log"
 	"strconv"
 )
 
@@ -25,6 +26,7 @@ func CreateComment(c *gin.Context) {
 	var requestComment models.Comment
 	err := c.ShouldBind(&requestComment)
 	if err != nil {
+		log.Println(err)
 		response.Fail(c, "解析请求数据失败")
 	}
 	err = db.Create(&requestComment).Error

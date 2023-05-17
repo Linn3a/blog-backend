@@ -13,7 +13,7 @@ type User struct {
 	Desc      string    `json:"desc" binding:"-"`
 	Gender    uint      `json:"gender" binding:"-"`
 	IsAdmin   bool      `json:"is_admin" binding:"-"`
-	Birthday  time.Time `json:"birthday" binding:"-"`
+	Birthday  time.Time `json:"birthday" `
 	LastLogin time.Time `json:"last_login" binding:"-"`
 	CreatedAt time.Time `json:"created_at" binding:"-"`
 	Comments  Comments  `json:"comments"`
