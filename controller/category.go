@@ -41,6 +41,9 @@ func GetCate(c *gin.Context) {
 		return
 	}
 	log.Println(cate)
+	for i := 0; i < len(cate.Passages); i++ {
+		cate.Passages[i].Content = ""
+	}
 	response.Response(c, http.StatusOK, true, gin.H{
 		"cate": cate,
 	}, "获取成功")

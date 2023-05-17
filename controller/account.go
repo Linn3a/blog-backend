@@ -249,11 +249,13 @@ func Autologin(c *gin.Context) {
 	err = db.First(&user, currentUser.UserID).Error
 	if err != nil {
 		response.Fail(c, "获取用户数据失败")
+		return
 	}
 
 	response.Success(c, gin.H{
 		"id":       currentUser.UserID,
 		"username": user.Username,
 		"avatar":   user.Avatar,
+		"is_admin": user.IsAdmin,
 	}, "获取用户数据成功")
 }
