@@ -205,20 +205,6 @@ func GetUser(c *gin.Context) {
 		response.Response(c, http.StatusOK, false, nil, "获取用户信息失败")
 		return
 	}
-	//var stars models.Stars
-	//err = db.Find(&stars, "UserId=?", userid)
-	//if err != nil {
-	//	response.Response(c, http.StatusOK, false, nil, "获取用户收藏文章失败")
-	//	return
-	//}
-	//log.Println(stars)
-	//var comments models.Comments
-	//err = db.Find(&comments, "UserId=?", userid)
-	//if err != nil {
-	//	response.Response(c, http.StatusOK, false, nil, "获取用户发出评论失败")
-	//	return
-	//}
-	//log.Println(comments)
 	response.Response(c, http.StatusOK, true, gin.H{
 		"user": user,
 	}, "获取用户信息成功")

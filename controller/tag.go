@@ -47,7 +47,7 @@ func GetTag(c *gin.Context) {
 	tagId := c.Param("id")
 	tid, _ := strconv.Atoi(tagId)
 	var tag models.Tag
-	err := db.Model(&models.Tag{}).Preload("Passages").Find(&tag, uint(tid)).Error
+	err := db.Model(&models.Tag{}).Preload("Passages").Preload("Passages.Tags").Find(&tag, uint(tid)).Error
 	if err != nil {
 		log.Println(err)
 		response.Fail(c, "查找标签数据失败")
@@ -85,6 +85,7 @@ func DeleteTag(c *gin.Context) {
 	err := db.Delete(&models.Tag{}, tagId).Error
 	if err != nil {
 		response.Fail(c, "删除标签失败")
+		return
 	}
 	response.Success(c, nil, "删除标签成功")
 }
