@@ -44,7 +44,7 @@ func Register(c *gin.Context) {
 		Username:  username,
 		Password:  string(hashedPassword),
 		Gender:    gender,
-		Avatar:    "https://img.js.design/assets/img/645650aca30d747a6da0787b.jpg#208a42317334f6b46f2c03fcf9c101bd",
+		Avatar:    "https://em-content.zobj.net/thumbs/240/google/350/woman-raising-hand_1f64b-200d-2640-fe0f.png",
 		IsAdmin:   false,
 		Birthday:  time.Now(),
 		LastLogin: time.Now(),
