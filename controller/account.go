@@ -190,6 +190,7 @@ type userinfo struct {
 	Gender    int    `json:"gender"`
 	LastLogin string `json:"last_login"`
 	CreatedAt string `json:"created_at"`
+	Birthday  string `json:"birthday" `
 	IsAdmin   bool   `json:"is_admin"`
 }
 
