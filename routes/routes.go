@@ -10,7 +10,6 @@ func CollectRoutes(r *gin.Engine) *gin.Engine {
 	// 允许跨域访问
 	r.Use(middleware.CORSMiddleware())
 	// 注册
-
 	r.POST("/user", controller.Register)
 	// 登录
 	r.POST("/login", controller.Login)

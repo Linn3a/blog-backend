@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-	// "strconv"
 )
 
 // Register 用户注册：增加一个用户
