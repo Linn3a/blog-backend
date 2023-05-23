@@ -16,6 +16,8 @@ type User struct {
 	Birthday  time.Time `json:"birthday" `
 	LastLogin time.Time `json:"last_login" binding:"-"`
 	CreatedAt time.Time `json:"created_at" binding:"-"`
+	UserTag   string    `json:"user_tag" binging:"-" gorm:"default:游客"`
+	TagColor  string    `json:"tag_color" binging:"-" gorm:"default:#f3f4f6"`
 	Comments  Comments  `json:"comments"`
 	Passages  Passages  `gorm:"many2many:star_passages;"`
 }

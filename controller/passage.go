@@ -31,6 +31,8 @@ type responsecomment struct {
 	UserId    uint      `json:"user_id"`
 	Username  string    `json:"username"`
 	Avatar    string    `json:"avatar"`
+	UserTag   string    `json:"user_tag"`
+	TagColor  string    `json:"tag_color"`
 	PassageId uint      `json:"passage_id"`
 	CreatedAt time.Time `json:"created_at"`
 }
@@ -47,20 +49,52 @@ func GetPassageContent(c *gin.Context) {
 	}
 	var responsecomments []responsecomment
 
+	//p := make(map[uint]string)
+	//var newComments []responseComment
+	//for i := 0; i < len(user.Comments); i++ {
+	//	now, ok := p[user.Comments[i].PassageId]
+	//	if ok == true {
+	//		newComments = append(newComments, responseComment{
+	//			Id:        user.Comments[i].Id,
+	//			Content:   user.Comments[i].Content,
+	//			PassageId: user.Comments[i].PassageId,
+	//			CreatedAt: user.Comments[i].CreatedAt,
+	//			Title:     now,
+	//		})
+	//	} else {
+	//		var passage models.Passage
+	//		db.Find(&passage, user.Comments[i].PassageId)
+	//		p[user.Comments[i].PassageId] = passage.Title
+	//		newComments = append(newComments, responseComment{
+	//			Id:        user.Comments[i].Id,
+	//			Content:   user.Comments[i].Content,
+	//			PassageId: user.Comments[i].PassageId,
+	//			CreatedAt: user.Comments[i].CreatedAt,
+	//			Title:     passage.Title,
+	//		})
+	//	}
+	//}
+
+	set := make(map[uint]responsecomment)
 	for i := 0; i < len(passage.Comments); i++ {
-		log.Println(passage.Comments[i].UserId)
-		var result models.User
-		db.First(&result, passage.Comments[i].UserId)
-		log.Println(result.Username)
-		responsecomments = append(responsecomments, responsecomment{
-			Id:        passage.Comments[i].Id,
-			Content:   passage.Comments[i].Content,
-			UserId:    passage.Comments[i].UserId,
-			Username:  result.Username,
-			Avatar:    result.Avatar,
-			PassageId: passage.Comments[i].PassageId,
-			CreatedAt: passage.Comments[i].CreatedAt,
-		})
+		now, ok := set[passage.Comments[i].UserId]
+		if ok == true {
+			responsecomments = append(responsecomments, now)
+		} else {
+			var result models.User
+			db.First(&result, passage.Comments[i].UserId)
+			responsecomments = append(responsecomments, responsecomment{
+				Id:        passage.Comments[i].Id,
+				Content:   passage.Comments[i].Content,
+				UserId:    passage.Comments[i].UserId,
+				Username:  result.Username,
+				Avatar:    result.Avatar,
+				UserTag:   result.UserTag,
+				TagColor:  result.TagColor,
+				PassageId: passage.Comments[i].PassageId,
+				CreatedAt: passage.Comments[i].CreatedAt,
+			})
+		}
 	}
 	response.Response(c, http.StatusOK, true, gin.H{
 		"passage": gin.H{

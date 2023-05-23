@@ -191,6 +191,8 @@ type userinfo struct {
 	CreatedAt string `json:"created_at"`
 	Birthday  string `json:"birthday" `
 	IsAdmin   bool   `json:"is_admin"`
+	UserTag   string `json:"user_tag"`
+	TagColor  string `json:"tag_color"`
 }
 
 func GetAllUsers(c *gin.Context) {
