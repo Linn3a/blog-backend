@@ -5,6 +5,7 @@ import (
 	"blog/response"
 	"github.com/gin-gonic/gin"
 	"log"
+	"sort"
 	"strconv"
 )
 
@@ -38,6 +39,42 @@ func GetAllTags(c *gin.Context) {
 		})
 	}
 
+	response.Success(c, gin.H{"tags": responseBody}, "获取所有标签成功")
+}
+
+type orderedTag struct {
+	Id     uint   `json:"id"`
+	Name   string `json:"name"`
+	Color  string `json:"color"`
+	Amount int    `json:"amount"`
+}
+type orderedTags []orderedTag
+
+func (tags orderedTags) Len() int           { return len(tags) }
+func (tags orderedTags) Less(i, j int) bool { return tags[i].Amount > tags[j].Amount }
+func (tags orderedTags) Swap(i, j int)      { tags[i], tags[j] = tags[j], tags[i] }
+
+// GetOrderedTags
+func GetOrderedTags(c *gin.Context) {
+	db := models.GetDB()
+	var tags models.Tags
+	err := db.Model(&models.Tag{}).Preload("Passages").Find(&tags).Error
+	if err != nil {
+		response.Fail(c, "获取标签数据失败")
+		return
+	}
+	var responseBody orderedTags
+	for i := 0; i < len(tags); i++ {
+		if len(tags[i].Passages) != 0 {
+			responseBody = append(responseBody, orderedTag{
+				Id:     tags[i].Id,
+				Name:   tags[i].Name,
+				Color:  tags[i].Color,
+				Amount: len(tags[i].Passages),
+			})
+		}
+	}
+	sort.Sort(responseBody)
 	response.Success(c, gin.H{"tags": responseBody}, "获取所有标签成功")
 }
 

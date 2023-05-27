@@ -39,6 +39,7 @@ func CollectRoutes(r *gin.Engine) *gin.Engine {
 	r.GET("/tag", controller.GetAllTags)
 	r.GET("/tag/:id", controller.GetTag)
 	r.POST("/tag", controller.CreateTag)
+	r.GET("/ordered_tag", controller.GetOrderedTags)
 	r.DELETE("/tag/:id", controller.DeleteTag)
 
 	r.GET("/comment/:id", controller.GetCommentsbyPassageId)

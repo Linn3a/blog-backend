@@ -19,7 +19,7 @@ func CORSMiddleware() gin.HandlerFunc {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", "http://124.220.198.163")
 		}
 
-		//dev
+		////dev
 		//c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "*")

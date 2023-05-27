@@ -49,32 +49,6 @@ func GetPassageContent(c *gin.Context) {
 	}
 	var responsecomments []responsecomment
 
-	//p := make(map[uint]string)
-	//var newComments []responseComment
-	//for i := 0; i < len(user.Comments); i++ {
-	//	now, ok := p[user.Comments[i].PassageId]
-	//	if ok == true {
-	//		newComments = append(newComments, responseComment{
-	//			Id:        user.Comments[i].Id,
-	//			Content:   user.Comments[i].Content,
-	//			PassageId: user.Comments[i].PassageId,
-	//			CreatedAt: user.Comments[i].CreatedAt,
-	//			Title:     now,
-	//		})
-	//	} else {
-	//		var passage models.Passage
-	//		db.Find(&passage, user.Comments[i].PassageId)
-	//		p[user.Comments[i].PassageId] = passage.Title
-	//		newComments = append(newComments, responseComment{
-	//			Id:        user.Comments[i].Id,
-	//			Content:   user.Comments[i].Content,
-	//			PassageId: user.Comments[i].PassageId,
-	//			CreatedAt: user.Comments[i].CreatedAt,
-	//			Title:     passage.Title,
-	//		})
-	//	}
-	//}
-
 	set := make(map[uint]responsecomment)
 	for i := 0; i < len(passage.Comments); i++ {
 		now, ok := set[passage.Comments[i].UserId]
